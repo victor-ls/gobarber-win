@@ -1,4 +1,5 @@
 import Sequelize, { Model } from 'sequelize';
+import { isBefore, subHours } from 'date-fns';
 
 class Appointment extends Model {
     static init(sequelize) {
@@ -7,6 +8,18 @@ class Appointment extends Model {
                 // OBJETO CONTENDO TODAS AS COLUNAS QUE O USUARIO PODE RECEBER NA HORA DE CRIAR, EDITAR, ETC
                 date: Sequelize.DATE,
                 canceled_at: Sequelize.DATE,
+                past: {
+                    type: Sequelize.VIRTUAL,
+                    get() {
+                        return isBefore(this.date, new Date());
+                    },
+                },
+                cancellable: {
+                    type: Sequelize.VIRTUAL,
+                    get() {
+                        return isBefore(new Date(), subHours(this.date, 2));
+                    },
+                },
             },
 
             {
