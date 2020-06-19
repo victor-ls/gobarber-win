@@ -1,0 +1,28 @@
+version: "3"
+services:
+    mongo:
+        image: mongo
+        ports:
+            - "27017:27017"
+    postgres:
+        image: postgres
+        environment:
+            - POSTGRES_PASSWORD=docker
+        ports:
+            - "5432:5432"
+    redis:
+        image: redis:alpine
+        ports:
+            - "6379:6379"
+    app:
+        build: .
+        ports:
+            - "3333:3333"
+        links:
+            - mongo
+            - redis
+            - postgres
+        depends_on:
+            - mongo
+            - postgres
+            - redis
